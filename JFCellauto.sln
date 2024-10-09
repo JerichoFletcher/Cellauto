@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35303.130
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JFCellauto", "JFCellauto\JFCellauto.csproj", "{E39548A7-78CD-45BB-9516-3447F87C6D53}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JFCellautoCLI", "JFCellautoCLI\JFCellautoCLI.csproj", "{79AE32F9-5759-454D-97E8-7ABE4E957531}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E39548A7-78CD-45BB-9516-3447F87C6D53}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E39548A7-78CD-45BB-9516-3447F87C6D53}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E39548A7-78CD-45BB-9516-3447F87C6D53}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E39548A7-78CD-45BB-9516-3447F87C6D53}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79AE32F9-5759-454D-97E8-7ABE4E957531}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79AE32F9-5759-454D-97E8-7ABE4E957531}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79AE32F9-5759-454D-97E8-7ABE4E957531}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79AE32F9-5759-454D-97E8-7ABE4E957531}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0A12EF0E-F08D-4D90-BEE7-9DF3610E15D1}
+	EndGlobalSection
+EndGlobal
