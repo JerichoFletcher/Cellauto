@@ -4,6 +4,7 @@ public class Grid<T> where T : struct, Enum {
     public Vector Bounds { get; }
     public Cell<T>[,] Cells { get; protected set; }
     public List<Rule<T>> Rules { get; }
+    public bool WrapEdges { get; set; }
 
     internal Grid(Vector bounds) {
         Bounds = bounds;
@@ -31,24 +32,40 @@ public class Grid<T> where T : struct, Enum {
             throw new ArgumentOutOfRangeException(nameof(y));
         }
 
-        for(int nx = x - 1; nx <= x + 1; nx++) {
-            for(int ny = y - 1; ny <= y + 1; ny++) {
-                if(nx == x && ny == y) continue;
-                if(nx < 0 || ny < 0 || nx >= Bounds.X || ny >= Bounds.Y) continue;
+        for(int dx = -1; dx <= 1; dx++) {
+            for(int dy = -1; dy <= 1; dy++) {
+                if(dx == 0 && dy == 0) continue;
+
+                var nx = x + dx;
+                var ny = y + dy;
+
+                if(nx < 0 || ny < 0 || nx >= Bounds.X || ny >= Bounds.Y) {
+                    if(!WrapEdges) {
+                        continue;
+                    }
+
+                    if(nx < 0) nx = Bounds.X + nx % Bounds.X;
+                    if(ny < 0) ny = Bounds.Y + ny % Bounds.Y;
+                    if(nx >= Bounds.X) nx %= Bounds.X;
+                    if(ny >= Bounds.Y) ny %= Bounds.Y;
+                }
 
                 yield return Cells[nx, ny];
             }
         }
     }
 
-    public void Step() {
+    public void Step(bool parallel = false) {
         var newBoard = new Cell<T>[Bounds.X, Bounds.Y];
         var stepRules = Rules
             .OfType<StepRule<T>>()
-            .ToList();
+            .ToArray();
 
-        for(int x = 0; x < Bounds.X; x++) {
-            for(int y = 0; y < Bounds.Y; y++) {
+        if(parallel) {
+            Parallel.For(0, Bounds.X * Bounds.Y, i => {
+                var x = i / Bounds.Y;
+                var y = i % Bounds.Y;
+
                 var oldCell = Cells[x, y];
                 var newCell = new Cell<T>(oldCell.Coord, oldCell.Value);
 
@@ -57,6 +74,19 @@ public class Grid<T> where T : struct, Enum {
                 }
 
                 newBoard[x, y] = newCell;
+            });
+        } else {
+            for(var x = 0; x < Bounds.X; x++) {
+                for(var y = 0; y < Bounds.Y; y++) {
+                    var oldCell = Cells[x, y];
+                    var newCell = new Cell<T>(oldCell.Coord, oldCell.Value);
+
+                    foreach(var stepRule in stepRules) {
+                        newCell.Value = stepRule.Evaluate(newCell, this);
+                    }
+
+                    newBoard[x, y] = newCell;
+                }
             }
         }
 

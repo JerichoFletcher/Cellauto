@@ -22,19 +22,21 @@ public static class Program {
     }
 
     public static void Main(string[] args) {
-        var grid = Grid<CellVal>.Filled(new Vector(20, 20), CellVal.Dead);
-        grid.Cells[0, 1].Value = CellVal.Alive;
-        grid.Cells[1, 2].Value = CellVal.Alive;
-        grid.Cells[2, 0].Value = CellVal.Alive;
-        grid.Cells[2, 1].Value = CellVal.Alive;
-        grid.Cells[2, 2].Value = CellVal.Alive;
+        var grid = Grid<CellVal>.Filled(new Vector(28, 60), CellVal.Dead);
+        grid.WrapEdges = true;
+
+        var r = new Random();
+
+        for(var i = 0; i < grid.Bounds.X * grid.Bounds.Y / 3; i++) {
+            grid.Cells[r.Next(grid.Bounds.X), r.Next(grid.Bounds.Y)].Value = CellVal.Alive;
+        }
 
         grid.Rules.Add(new StepRule<CellVal>((cell, grid) => {
             var aliveNeighbors = grid
                 .Neighbors(cell.Coord.X, cell.Coord.Y)
                 .Where(cell => cell.Value == CellVal.Alive)
                 .Count();
-            
+
             if(aliveNeighbors == 3 || aliveNeighbors == 2 && cell.Value == CellVal.Alive) return CellVal.Alive;
             return CellVal.Dead;
         }));
@@ -42,8 +44,8 @@ public static class Program {
         while(true) {
             PrintGrid(grid);
 
-            Thread.Sleep(100);
-            grid.Step();
+            Thread.Sleep(30);
+            grid.Step(true);
         }
     }
 }
