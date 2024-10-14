@@ -1,51 +1,50 @@
-﻿using JFCellauto.Structs;
+﻿using JFCellauto.Impl;
+using JFCellauto.Structs;
 using System.Text;
 
 namespace JFCellautoCLI;
 
 public static class Program {
-    public enum CellVal {
-        Dead, Alive
+    private static string ColorOf(bool val) {
+        return val ? "\x1b[37;47m" : "\x1b[30;40m";
     }
 
-    private static void PrintGrid(Grid<CellVal> grid) {
-        var str = new StringBuilder("\x1b[0;0H");
+    private static void PrintGrid(Grid<bool> grid) {
+        var lastState = grid.Cells[0, 0].Value;
+        var str = new StringBuilder("\x1b[0;0H").Append(ColorOf(lastState));
 
         for(int x = 0; x < grid.Bounds.X; x++) {
+            if(x > 0) str.AppendLine();
+
             for(int y = 0; y < grid.Bounds.Y; y++) {
-                str.Append(grid.Cells[x, y].Value == CellVal.Alive ? "O " : "_ ");
+                var state = grid.Cells[x, y].Value;
+                if(state != lastState) {
+                    str.Append(ColorOf(state));
+                    lastState = state;
+                }
+                str.Append("  ");
             }
-            str.AppendLine();
         }
 
-        Console.WriteLine(str.ToString());
+        Console.Write(str.Append("\x1b[0m").ToString());
     }
 
     public static void Main(string[] args) {
-        var grid = Grid<CellVal>.Filled(new Vector(28, 60), CellVal.Dead);
-        grid.WrapEdges = true;
-
+        var rows = 30;
+        var cols = 60;
+        var randGridData = new bool[rows, cols];
         var r = new Random();
-
-        for(var i = 0; i < grid.Bounds.X * grid.Bounds.Y / 3; i++) {
-            grid.Cells[r.Next(grid.Bounds.X), r.Next(grid.Bounds.Y)].Value = CellVal.Alive;
+        for(int i = 0; i < rows * cols / 4; i++) {
+            randGridData[r.Next(rows), r.Next(cols)] = true;
         }
 
-        grid.Rules.Add(new StepRule<CellVal>((cell, grid) => {
-            var aliveNeighbors = grid
-                .Neighbors(cell.Coord.X, cell.Coord.Y)
-                .Where(cell => cell.Value == CellVal.Alive)
-                .Count();
-
-            if(aliveNeighbors == 3 || aliveNeighbors == 2 && cell.Value == CellVal.Alive) return CellVal.Alive;
-            return CellVal.Dead;
-        }));
+        var grid = new ConwayLifeBuilderDirector().Make(new GridBuilder<bool>().Data(randGridData));
 
         while(true) {
             PrintGrid(grid);
 
-            Thread.Sleep(30);
-            grid.Step(true);
+            Thread.Sleep(50);
+            grid.Update();
         }
     }
 }
