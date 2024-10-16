@@ -7,6 +7,8 @@ namespace JFCellauto.Structs;
 /// </summary>
 /// <typeparam name="T">The type of the state value stored in each cell within the grid.</typeparam>
 public class Grid<T> where T : struct {
+    private Cell<T>[,] backCells;
+
     /// <summary>How to update cells in the grid on each generation.</summary>
     public IGridUpdateStrategy<T> UpdateStrategy { get; set; }
     /// <summary>The bounds, i.e. size of the grid. All coordinates defined within the grid are between (0, 0) and this point.</summary>
@@ -21,8 +23,18 @@ public class Grid<T> where T : struct {
     internal Grid(Vector bounds, IGridUpdateStrategy<T> updateStrategy) {
         UpdateStrategy = updateStrategy;
         Bounds = bounds;
-        Cells = new Cell<T>[bounds.X, bounds.Y];
         Rules = [];
+
+        // Create front and back cell buffers
+        Cells = new Cell<T>[bounds.X, bounds.Y];
+        backCells = new Cell<T>[bounds.X, bounds.Y];
+
+        // Fill back cell buffer with empty cells
+        for(var x = 0; x < bounds.X; x++) {
+            for(var y = 0; y < bounds.Y; y++) {
+                backCells[x, y] = new Cell<T>(new Vector(x, y), default);
+            }
+        }
     }
 
     /// <summary>
@@ -84,18 +96,8 @@ public class Grid<T> where T : struct {
     /// <summary>
     /// Advances the grid to the next generation by updating the cell values based on the defined grid update strategy.
     /// </summary>
-    /// <exception cref="Exception">The update strategy returned a cell value array that does not match the grid bounds.</exception>
     public void Update() {
-        var newCells = UpdateStrategy.GetNextGeneration(this);
-        var newX = newCells.GetLength(0);
-        var newY = newCells.GetLength(1);
-
-        if(newX != Bounds.X || newY != Bounds.Y) {
-            throw new Exception(
-                $"Update strategy returning a grid data with invalid bounds (expected {Bounds.X}:{Bounds.Y}, got {newX}:{newY})"
-            );
-        }
-
-        Cells = newCells;
+        UpdateStrategy.GetNextGeneration(this, backCells);
+        (backCells, Cells) = (Cells, backCells);
     }
 }
