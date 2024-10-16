@@ -8,12 +8,6 @@ namespace JFCellauto.Structs;
 /// <typeparam name="T">The type of the state value stored in each cell within the resultant grid.</typeparam>
 public interface IGridBuilderStep2<T> where T : struct {
     /// <summary>
-    /// Appends a collection of rules to the grid builder.
-    /// </summary>
-    /// <param name="rule">An array containing grid update rule instances to be added.</param>
-    /// <returns>The builder object.</returns>
-    IGridBuilderStep2<T> Rule(params Rule<T>[] rule);
-    /// <summary>
     /// Asserts that the resultant grid should wrap around its edges.
     /// </summary>
     /// <returns>The builder object.</returns>
@@ -31,12 +25,6 @@ public interface IGridBuilderStep2<T> where T : struct {
 /// </summary>
 /// <typeparam name="T">The type of the state value stored in each cell within the resultant grid.</typeparam>
 public interface IGridBuilderStep3<T> where T : struct {
-    /// <summary>
-    /// Appends a collection of rules to the grid builder.
-    /// </summary>
-    /// <param name="rule">An array containing grid update rule instances to be added.</param>
-    /// <returns>The builder object.</returns>
-    IGridBuilderStep3<T> Rule(params Rule<T>[] rule);
     /// <summary>
     /// Asserts that the resultant grid should wrap around its edges.
     /// </summary>
@@ -56,12 +44,6 @@ public interface IGridBuilderStep3<T> where T : struct {
 /// <typeparam name="T">The type of the state value stored in each cell within the resultant grid.</typeparam>
 public interface IGridBuilderStepFinal<T> where T : struct {
     /// <summary>
-    /// Appends a collection of rules to the grid builder.
-    /// </summary>
-    /// <param name="rule">An array containing grid update rule instances to be added.</param>
-    /// <returns>The builder object.</returns>
-    IGridBuilderStepFinal<T> Rule(params Rule<T>[] rule);
-    /// <summary>
     /// Asserts that the resultant grid should wrap around its edges.
     /// </summary>
     /// <returns>The builder object.</returns>
@@ -78,18 +60,7 @@ public interface IGridBuilderStepFinal<T> where T : struct {
 /// </summary>
 /// <typeparam name="T">The type of the state value stored in each cell within the resultant grid.</typeparam>
 public sealed class GridBuilder<T> where T : struct {
-    internal List<Rule<T>> rules = [];
     internal bool wrapEdges = false;
-
-    /// <summary>
-    /// Appends a collection of rules to the grid builder.
-    /// </summary>
-    /// <param name="rule">An array containing grid update rule instances to be added.</param>
-    /// <returns>The builder object.</returns>
-    public GridBuilder<T> Rule(params Rule<T>[] rule) {
-        rules.AddRange(rule);
-        return this;
-    }
 
     /// <summary>
     /// Asserts that the resultant grid should wrap around its edges.
@@ -107,7 +78,7 @@ public sealed class GridBuilder<T> where T : struct {
     /// <returns>The builder object.</returns>
     public IGridBuilderStep2<T> Bounds(Vector bounds) {
         return new GridBuilderWithSize<T>(bounds) {
-            rules = rules,
+            wrapEdges = wrapEdges,
         };
     }
 
@@ -127,21 +98,15 @@ public sealed class GridBuilder<T> where T : struct {
         }
 
         return new GridBuilderWithCellData<T>(flattenedData, bounds) {
-            rules = rules,
+            wrapEdges = wrapEdges,
         };
     }
 }
 
 internal sealed class GridBuilderWithSize<T>(Vector bounds) : IGridBuilderStep2<T> where T : struct {
-    internal List<Rule<T>> rules = [];
     internal bool wrapEdges = false;
 
     private readonly T[] data = new T[bounds.X * bounds.Y];
-
-    public IGridBuilderStep2<T> Rule(params Rule<T>[] rule) {
-        rules.AddRange(rule);
-        return this;
-    }
 
     public IGridBuilderStep2<T> WrapEdges() {
         wrapEdges = true;
@@ -151,19 +116,13 @@ internal sealed class GridBuilderWithSize<T>(Vector bounds) : IGridBuilderStep2<
     public IGridBuilderStep3<T> Fill(T value) {
         Array.Fill(data, value);
         return new GridBuilderWithCellData<T>(data, bounds) {
-            rules = rules,
+            wrapEdges = wrapEdges,
         };
     }
 }
 
 internal sealed class GridBuilderWithCellData<T>(T[] data, Vector bounds) : IGridBuilderStep3<T> where T : struct {
-    internal List<Rule<T>> rules = [];
     internal bool wrapEdges = false;
-
-    public IGridBuilderStep3<T> Rule(params Rule<T>[] rule) {
-        rules.AddRange(rule);
-        return this;
-    }
 
     public IGridBuilderStep3<T> WrapEdges() {
         wrapEdges = true;
@@ -172,20 +131,14 @@ internal sealed class GridBuilderWithCellData<T>(T[] data, Vector bounds) : IGri
 
     public IGridBuilderStepFinal<T> UpdateStrategy(IGridUpdateStrategy<T> updateStrategy) {
         return new GridBuilderWithUpdateStrategy<T>(data, bounds, updateStrategy) {
-            rules = rules,
+            wrapEdges = wrapEdges,
         };
     }
 }
 
 internal sealed class GridBuilderWithUpdateStrategy<T>(T[] data, Vector bounds, IGridUpdateStrategy<T> updateStrategy) : IGridBuilderStepFinal<T> where T : struct {
-    internal List<Rule<T>> rules = [];
     internal IGridUpdateStrategy<T> updateStrategy = updateStrategy;
     internal bool wrapEdges = false;
-
-    public IGridBuilderStepFinal<T> Rule(params Rule<T>[] rule) {
-        rules.AddRange(rule);
-        return this;
-    }
 
     public IGridBuilderStepFinal<T> WrapEdges() {
         wrapEdges = true;
@@ -203,7 +156,6 @@ internal sealed class GridBuilderWithUpdateStrategy<T>(T[] data, Vector bounds, 
 
             grid.Cells[x, y] = new Cell<T>(new Vector(x, y), data[i]);
         }
-        grid.Rules.AddRange(rules);
 
         return grid;
     }

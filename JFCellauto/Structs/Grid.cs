@@ -15,15 +15,12 @@ public class Grid<T> where T : struct {
     public Vector Bounds { get; }
     /// <summary>An array containing all the cells within the grid. The indices of each cell correspond to its coordinate.</summary>
     public Cell<T>[,] Cells { get; protected set; }
-    /// <summary>A collection of automaton rules that hold for this grid.</summary>
-    public List<Rule<T>> Rules { get; }
     /// <summary>Whether the grid space wraps around on its edges.</summary>
     public bool WrapEdges { get; set; }
 
     internal Grid(Vector bounds, IGridUpdateStrategy<T> updateStrategy) {
         UpdateStrategy = updateStrategy;
         Bounds = bounds;
-        Rules = [];
 
         // Create front and back cell buffers
         Cells = new Cell<T>[bounds.X, bounds.Y];

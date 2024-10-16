@@ -6,13 +6,13 @@ namespace JFCellauto.Algorithms;
 /// An implementation of <see cref="IGridUpdateStrategy{T}"/> that processes each <see cref="Cell{T}"/> in a <see cref="Grid{T}"/>
 /// in parallel, using the Task Parallel Library.
 /// </summary>
+/// <param name="rules">An array of grid rules to be used by the update strategy.</param>
 /// <typeparam name="T">The type of the state value stored in each <see cref="Cell{T}"/>.</typeparam>
-public sealed class ParallelGridUpdateStrategy<T> : IGridUpdateStrategy<T> where T : struct {
-    public void GetNextGeneration(Grid<T> grid, Cell<T>[,] outBuffer) {
-        var stepRules = grid.Rules
-            .OfType<StepRule<T>>()
-            .ToArray();
+public sealed class ParallelGridUpdateStrategy<T>(params StepRule<T>[] rules) : IGridUpdateStrategy<T> where T : struct {
+    /// <summary>An array of grid rules to be used by the update strategy.</summary>
+    public StepRule<T>[] Rules { get; } = rules;
 
+    public void GetNextGeneration(Grid<T> grid, Cell<T>[,] outBuffer) {
         Parallel.For(0, grid.Bounds.X * grid.Bounds.Y, i => {
             var x = i / grid.Bounds.Y;
             var y = i % grid.Bounds.Y;
@@ -20,7 +20,7 @@ public sealed class ParallelGridUpdateStrategy<T> : IGridUpdateStrategy<T> where
             var outCell = outBuffer[x, y];
             outCell.Value = grid.Cells[x, y].Value;
 
-            foreach(var stepRule in stepRules) {
+            foreach(var stepRule in Rules) {
                 outBuffer[x, y].Value = stepRule.Evaluate(outCell, grid);
             }
         });

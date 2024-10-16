@@ -1,5 +1,7 @@
 ﻿using JFCellauto.Impl;
 using JFCellauto.Structs;
+using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace JFCellautoCLI;
@@ -38,13 +40,36 @@ public static class Program {
             randGridData[r.Next(rows), r.Next(cols)] = true;
         }
 
-        var grid = new ConwayLifeBuilderDirector().Make(new GridBuilder<bool>().Data(randGridData));
+        var lifeBDir = new ConwayLifeBuilderDirector();
+        var gridSeq = lifeBDir.Make(
+            new GridBuilder<bool>()
+                .Data(randGridData),
+            ConwayLifeBuilderDirector.UpdateStrategyMode.Sequential
+        );
+        var gridPar = lifeBDir.Make(
+            new GridBuilder<bool>()
+                .Data(randGridData),
+            ConwayLifeBuilderDirector.UpdateStrategyMode.Parallel
+        );
 
-        while(true) {
-            PrintGrid(grid);
+        var iter = 10_000;
 
-            Thread.Sleep(50);
-            grid.Update();
-        }
+        Console.WriteLine($"Running {iter} iterations of sequential grid update");
+        var sw = Stopwatch.StartNew();
+        for(var i = 0; i < iter; i++) gridSeq.Update();
+        sw.Stop();
+
+        var seqT = sw.ElapsedMilliseconds;
+
+        Console.WriteLine($"Running {iter} iterations of parallel grid update");
+        sw.Restart();
+        for(var i = 0; i < iter; i++) gridPar.Update();
+        sw.Stop();
+
+        var parT = sw.ElapsedMilliseconds;
+
+        Console.WriteLine("Result:");
+        Console.WriteLine($"Sequential  : {seqT}ms ({(float)seqT / 1000} seconds)");
+        Console.WriteLine($"Parallel    : {parT}ms ({(float)parT / 1000} seconds)");
     }
 }

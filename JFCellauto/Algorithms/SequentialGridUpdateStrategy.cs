@@ -6,10 +6,14 @@ namespace JFCellauto.Algorithms;
 /// An implementation of <see cref="IGridUpdateStrategy{T}"/> that processes each <see cref="Cell{T}"/> in a <see cref="Grid{T}"/>
 /// sequentially in a single thread.
 /// </summary>
+/// <param name="rules">An array of grid rules to be used by the update strategy.</param>
 /// <typeparam name="T">The type of the state value stored in each <see cref="Cell{T}"/>.</typeparam>
-public sealed class SequentialGridUpdateStrategy<T> : IGridUpdateStrategy<T> where T : struct {
+public sealed class SequentialGridUpdateStrategy<T>(params Rule<T>[] rules) : IGridUpdateStrategy<T> where T : struct {
+    /// <summary>An array of grid rules to be used by the update strategy.</summary>
+    public Rule<T>[] Rules { get; } = rules;
+
     public void GetNextGeneration(Grid<T> grid, Cell<T>[,] outBuffer) {
-        var stepRules = grid.Rules
+        var stepRules = Rules
             .OfType<StepRule<T>>()
             .ToArray();
 
