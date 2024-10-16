@@ -12,17 +12,18 @@ public sealed class ParallelGridUpdateStrategy<T>(params StepRule<T>[] rules) : 
     /// <summary>An array of grid rules to be used by the update strategy.</summary>
     public StepRule<T>[] Rules { get; } = rules;
 
-    public void GetNextGeneration(Grid<T> grid, Cell<T>[,] outBuffer) {
+    public void GetNextGeneration(Grid<T> grid, CellBuffer<T> outBuffer) {
         Parallel.For(0, grid.Bounds.X * grid.Bounds.Y, i => {
             var x = i / grid.Bounds.Y;
             var y = i % grid.Bounds.Y;
 
-            var outCell = outBuffer[x, y];
-            outCell.Value = grid.Cells[x, y].Value;
+            var current = new Cell<T>(x, y, grid[x, y]);
 
             foreach(var stepRule in Rules) {
-                outBuffer[x, y].Value = stepRule.Evaluate(outCell, grid);
+                current.Value = stepRule.Evaluate(current, grid);
             }
+
+            outBuffer[x, y] = current.Value;
         });
     }
 }

@@ -7,14 +7,24 @@ namespace JFCellauto.Structs;
 /// </summary>
 /// <typeparam name="T">The type of the state value stored in each cell within the grid.</typeparam>
 public class Grid<T> where T : struct {
-    private Cell<T>[,] backCells;
 
     /// <summary>How to update cells in the grid on each generation.</summary>
     public IGridUpdateStrategy<T> UpdateStrategy { get; set; }
     /// <summary>The bounds, i.e. size of the grid. All coordinates defined within the grid are between (0, 0) and this point.</summary>
     public Vector Bounds { get; }
-    /// <summary>An array containing all the cells within the grid. The indices of each cell correspond to its coordinate.</summary>
-    public Cell<T>[,] Cells { get; protected set; }
+    /// <summary>The current active cell buffer of the grid.</summary>
+    public CellBuffer<T> FrontBuffer;
+    /// <summary>The working cell buffer of the grid.</summary>
+    public CellBuffer<T> BackBuffer;
+    
+    /// <summary>Accesses a cell in the grid at the specified coordinate.</summary>
+    /// <param name="x">The row coordinate of the cell.</param>
+    /// <param name="y">The column coordinate of the cell.</param>
+    /// <returns>The cell object at the specified coordinate.</returns>
+    public T this[int x, int y] {
+        get => FrontBuffer[x, y];
+        set => FrontBuffer[x, y] = value;
+    }
     /// <summary>Whether the grid space wraps around on its edges.</summary>
     public bool WrapEdges { get; set; }
 
@@ -23,13 +33,13 @@ public class Grid<T> where T : struct {
         Bounds = bounds;
 
         // Create front and back cell buffers
-        Cells = new Cell<T>[bounds.X, bounds.Y];
-        backCells = new Cell<T>[bounds.X, bounds.Y];
+        FrontBuffer = new CellBuffer<T>(bounds.X, bounds.Y);
+        BackBuffer = new CellBuffer<T>(bounds.X, bounds.Y);
 
         // Fill back cell buffer with empty cells
         for(var x = 0; x < bounds.X; x++) {
             for(var y = 0; y < bounds.Y; y++) {
-                backCells[x, y] = new Cell<T>(new Vector(x, y), default);
+                BackBuffer[x, y] = default;
             }
         }
     }
@@ -39,14 +49,14 @@ public class Grid<T> where T : struct {
     /// </summary>
     /// <param name="cell">The origin cell.</param>
     /// <returns>An enumerable that iterates through each direct neighbor of <paramref name="cell"/>.</returns>
-    public IEnumerable<Cell<T>> Neighbors(Cell<T> cell) => Neighbors(cell.Coord.X, cell.Coord.Y);
+    public IEnumerable<T> Neighbors(Cell<T> cell) => Neighbors(cell.X, cell.Y);
 
     /// <summary>
     /// Iterates each neighbor of the cell at the given coordinate.
     /// </summary>
     /// <param name="coord">The coordinate of the origin cell.</param>
     /// <returns>An enumerable that iterates through each direct neighbor of the cell at <paramref name="coord"/>.</returns>
-    public IEnumerable<Cell<T>> Neighbors(Vector coord) => Neighbors(coord.X, coord.Y);
+    public IEnumerable<T> Neighbors(Vector coord) => Neighbors(coord.X, coord.Y);
 
     /// <summary>
     /// Iterates each neighbor of the cell at the given X- and Y-coordinate.
@@ -55,7 +65,7 @@ public class Grid<T> where T : struct {
     /// <param name="y">The Y-coordinate of the origin cell.</param>
     /// <returns>An enumerable that iterates through each direct neighbor of the cell at (<paramref name="x"/>, <paramref name="y"/>).</returns>
     /// <exception cref="ArgumentOutOfRangeException">The given coordinate is outside of the bounds of the grid.</exception>
-    public IEnumerable<Cell<T>> Neighbors(int x, int y) {
+    public IEnumerable<T> Neighbors(int x, int y) {
         // Validate that the given coordinate is within the grid bounds
         if(x < 0 || x >= Bounds.X) {
             throw new ArgumentOutOfRangeException(nameof(x));
@@ -85,7 +95,7 @@ public class Grid<T> where T : struct {
                     if(ny >= Bounds.Y) ny %= Bounds.Y;
                 }
 
-                yield return Cells[nx, ny];
+                yield return this[nx, ny];
             }
         }
     }
@@ -94,7 +104,7 @@ public class Grid<T> where T : struct {
     /// Advances the grid to the next generation by updating the cell values based on the defined grid update strategy.
     /// </summary>
     public void Update() {
-        UpdateStrategy.GetNextGeneration(this, backCells);
-        (backCells, Cells) = (Cells, backCells);
+        UpdateStrategy.GetNextGeneration(this, BackBuffer);
+        (BackBuffer, FrontBuffer) = (FrontBuffer, BackBuffer);
     }
 }

@@ -12,19 +12,20 @@ public sealed class SequentialGridUpdateStrategy<T>(params Rule<T>[] rules) : IG
     /// <summary>An array of grid rules to be used by the update strategy.</summary>
     public Rule<T>[] Rules { get; } = rules;
 
-    public void GetNextGeneration(Grid<T> grid, Cell<T>[,] outBuffer) {
+    public void GetNextGeneration(Grid<T> grid, CellBuffer<T> outBuffer) {
         var stepRules = Rules
             .OfType<StepRule<T>>()
             .ToArray();
 
         for(var x = 0; x < grid.Bounds.X; x++) {
             for(var y = 0; y < grid.Bounds.Y; y++) {
-                var outCell = outBuffer[x, y];
-                outCell.Value = grid.Cells[x, y].Value;
+                var current = new Cell<T>(x, y, grid[x, y]);
 
                 foreach(var stepRule in stepRules) {
-                    outBuffer[x, y].Value = stepRule.Evaluate(outCell, grid);
+                    current.Value = stepRule.Evaluate(current, grid);
                 }
+
+                outBuffer[x, y] = current.Value;
             }
         }
     }

@@ -154,7 +154,7 @@ internal sealed class GridBuilderWithUpdateStrategy<T>(T[] data, Vector bounds, 
             var x = i / grid.Bounds.Y;
             var y = i % grid.Bounds.Y;
 
-            grid.Cells[x, y] = new Cell<T>(new Vector(x, y), data[i]);
+            grid[x, y] = data[i];
         }
 
         return grid;

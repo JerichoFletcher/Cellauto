@@ -13,5 +13,5 @@ public interface IGridUpdateStrategy<T> where T : struct {
     /// </summary>
     /// <param name="grid">The grid to process.</param>
     /// <param name="outBuffer">A cell buffer array where the new cell state values will be put.</param>
-    void GetNextGeneration(Grid<T> grid, Cell<T>[,] outBuffer);
+    void GetNextGeneration(Grid<T> grid, CellBuffer<T> outBuffer);
 }
