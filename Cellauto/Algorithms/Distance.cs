@@ -1,6 +1,6 @@
-﻿using JFCellauto.Structs;
+﻿using JerichoFletcher.Cellauto.Structs;
 
-namespace JFCellauto.Algorithms;
+namespace JerichoFletcher.Cellauto.Algorithms;
 
 /// <summary>
 /// Provides common distance functions that may be applied for various purposes.

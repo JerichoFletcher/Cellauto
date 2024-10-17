@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>JerichoFletcher</Authors>
+    <AssemblyName>JerichoFletcher.$(MSBuildProjectName)</AssemblyName>
+    <RootNamespace>JerichoFletcher.$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
+    <PackageProjectUrl></PackageProjectUrl>
+    <Title>Cellauto</Title>
+    <Description>A library for building and running simple 2-D cellular automata.</Description>
+    <RepositoryUrl>https://github.com/JerichoFletcher/Cellauto</RepositoryUrl>
+    <RunAnalyzersDuringBuild>False</RunAnalyzersDuringBuild>
+    <RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
+  </PropertyGroup>
+
+</Project>

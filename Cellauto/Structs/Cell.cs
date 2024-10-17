@@ -1,4 +1,4 @@
-﻿namespace JFCellauto.Structs;
+﻿namespace JerichoFletcher.Cellauto.Structs;
 
 /// <summary>
 /// Represents a single cell in a <see cref="Grid{T}"/> that stores a state value.

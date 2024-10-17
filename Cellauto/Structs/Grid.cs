@@ -1,6 +1,6 @@
-﻿using JFCellauto.Algorithms;
+﻿using JerichoFletcher.Cellauto.Algorithms;
 
-namespace JFCellauto.Structs;
+namespace JerichoFletcher.Cellauto.Structs;
 
 /// <summary>
 /// Represents a grid of cells each storing a state value that is manipulated in iterations (or generations) using a set of rules.
@@ -16,7 +16,7 @@ public class Grid<T> where T : struct {
     public CellBuffer<T> FrontBuffer;
     /// <summary>The working cell buffer of the grid.</summary>
     public CellBuffer<T> BackBuffer;
-    
+
     /// <summary>Accesses a cell in the grid at the specified coordinate.</summary>
     /// <param name="x">The row coordinate of the cell.</param>
     /// <param name="y">The column coordinate of the cell.</param>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JFCellauto", "JFCellauto\JFCellauto.csproj", "{E39548A7-78CD-45BB-9516-3447F87C6D53}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cellauto", "Cellauto\Cellauto.csproj", "{E39548A7-78CD-45BB-9516-3447F87C6D53}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JFCellautoCLI", "JFCellautoCLI\JFCellautoCLI.csproj", "{79AE32F9-5759-454D-97E8-7ABE4E957531}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CellautoCLI", "CellautoCLI\CellautoCLI.csproj", "{79AE32F9-5759-454D-97E8-7ABE4E957531}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

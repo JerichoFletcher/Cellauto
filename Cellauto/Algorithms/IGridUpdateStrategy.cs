@@ -1,6 +1,6 @@
-﻿using JFCellauto.Structs;
+﻿using JerichoFletcher.Cellauto.Structs;
 
-namespace JFCellauto.Algorithms;
+namespace JerichoFletcher.Cellauto.Algorithms;
 
 /// <summary>
 /// An abstraction of an object that provides a method by which to map the collection of <see cref="Cell{T}"/> in a <see cref="Grid{T}"/>

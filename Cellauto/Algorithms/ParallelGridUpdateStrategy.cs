@@ -1,6 +1,6 @@
-﻿using JFCellauto.Structs;
+﻿using JerichoFletcher.Cellauto.Structs;
 
-namespace JFCellauto.Algorithms;
+namespace JerichoFletcher.Cellauto.Algorithms;
 
 /// <summary>
 /// An implementation of <see cref="IGridUpdateStrategy{T}"/> that processes each <see cref="Cell{T}"/> in a <see cref="Grid{T}"/>

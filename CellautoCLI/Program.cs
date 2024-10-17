@@ -1,9 +1,9 @@
-﻿using JFCellauto.Impl;
-using JFCellauto.Structs;
+﻿using JerichoFletcher.Cellauto.Impl;
+using JerichoFletcher.Cellauto.Structs;
 using System.Diagnostics;
 using System.Text;
 
-namespace JFCellautoCLI;
+namespace JerichoFletcher.CellautoCLI;
 
 public static class Program {
     private static string ColorOf(bool val) {

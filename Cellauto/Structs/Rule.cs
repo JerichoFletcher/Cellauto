@@ -1,4 +1,4 @@
-﻿namespace JFCellauto.Structs;
+﻿namespace JerichoFletcher.Cellauto.Structs;
 
 public delegate T StepFunc<T>(int row, int col, T value, Grid<T> grid) where T : struct;
 

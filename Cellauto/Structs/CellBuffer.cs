@@ -1,4 +1,4 @@
-namespace JFCellauto.Structs;
+namespace JerichoFletcher.Cellauto.Structs;
 
 /// <summary>
 /// Acts as a facade for accessing a grid cell array.

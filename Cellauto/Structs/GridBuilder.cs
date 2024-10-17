@@ -1,6 +1,6 @@
-﻿using JFCellauto.Algorithms;
+﻿using JerichoFletcher.Cellauto.Algorithms;
 
-namespace JFCellauto.Structs;
+namespace JerichoFletcher.Cellauto.Structs;
 
 /// <summary>
 /// Represents a grid building stage where a bounds argument has been provided.

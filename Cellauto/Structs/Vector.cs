@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace JFCellauto.Structs;
+namespace JerichoFletcher.Cellauto.Structs;
 
 /// <summary>
 /// A data structure that may represent a two-dimensional position or direction.
@@ -23,7 +23,7 @@ public struct Vector(int x, int y) {
     public override readonly int GetHashCode() {
         var x = X.GetHashCode();
         var y = Y.GetHashCode();
-        return X.GetHashCode() ^ (y << 1) ^ (y >> 31);
+        return X.GetHashCode() ^ y << 1 ^ y >> 31;
     }
 
     public static bool operator ==(Vector left, Vector right) {

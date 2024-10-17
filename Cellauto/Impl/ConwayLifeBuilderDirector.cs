@@ -1,9 +1,9 @@
-﻿using JFCellauto.Algorithms;
-using JFCellauto.Structs;
+﻿using JerichoFletcher.Cellauto.Algorithms;
+using JerichoFletcher.Cellauto.Structs;
 
 using VByte = System.Numerics.Vector<byte>;
 
-namespace JFCellauto.Impl;
+namespace JerichoFletcher.Cellauto.Impl;
 
 /// <summary>
 /// A builder director that constructs <see cref="Grid{T}"/> instances following the specification and predefined rules
@@ -50,12 +50,12 @@ public sealed class ConwayLifeBuilderDirector {
                 }
 
                 if(
-                    grid.WrapEdges || (
+                    grid.WrapEdges ||
                         (!u || row > 0)
                         && (!d || row < grid.Bounds.X - 1)
                         && (!l || col > 0)
                         && (!r || col < grid.Bounds.Y - 1)
-                    )
+
                 ) {
                     temp[j] = buf[idx + currOffset];
                 } else {
@@ -87,7 +87,7 @@ public sealed class ConwayLifeBuilderDirector {
 
                 for(var j = 0; j < vSize && i + j < cellCount; j++) {
                     var neighborCount = vNeighborSum[j];
-                    outBufferRaw[i + j] = neighborCount == 3 || (neighborCount == 2 && inBufferByte[i + j] == 1);
+                    outBufferRaw[i + j] = neighborCount == 3 || neighborCount == 2 && inBufferByte[i + j] == 1;
                 }
             }
 
@@ -98,7 +98,7 @@ public sealed class ConwayLifeBuilderDirector {
                 var neighborCount = grid.Neighbors(x, y)
                     .Where(cell => cell)
                     .Count();
-                outBuffer[x, y] = neighborCount == 3 || (neighborCount == 2 && inBufferByte[i] == 1);
+                outBuffer[x, y] = neighborCount == 3 || neighborCount == 2 && inBufferByte[i] == 1;
             }
         }
     }
@@ -130,14 +130,14 @@ public sealed class ConwayLifeBuilderDirector {
                     .Where(cell => cell)
                     .Count();
 
-                return aliveNeighbors == 3 || (aliveNeighbors == 2 && val);
+                return aliveNeighbors == 3 || aliveNeighbors == 2 && val;
             })),
             UpdateStrategyMode.Parallel => new ParallelGridUpdateStrategy<bool>(new StepRule<bool>((x, y, val, grid) => {
                 var aliveNeighbors = grid.Neighbors(x, y)
                     .Where(cell => cell)
                     .Count();
 
-                return aliveNeighbors == 3 || (aliveNeighbors == 2 && val);
+                return aliveNeighbors == 3 || aliveNeighbors == 2 && val;
             })),
             UpdateStrategyMode.Vectorized => new ConwayLifeVectorizedUpdateStrategy(),
             _ => throw new ArgumentException("Unknown update strategy mode", nameof(mode))
